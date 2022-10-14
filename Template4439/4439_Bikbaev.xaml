@@ -5,9 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Template4439"
         mc:Ignorable="d"
-        Title="_4439_Bikbaev" Height="100" Width="200">
+        Title="_4439_Bikbaev" Height="450" Width="600">
     <Grid>
-        <Label Content="Бикбаев Руслан. Возраст: 18" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">Бикбаев Р.Н. 4439</Label>
+        <Button x:Name="ImportBtn" Click="ImportBtn_Click" Grid.Row="1" Width="200" Height="50">Импорт данных</Button>
 
+        <Button x:Name="ExportBtn" Click="ExportBtn_Click" Grid.Row="2" Width="200" Height="50">Экспорт данных</Button>
     </Grid>
 </Window>
