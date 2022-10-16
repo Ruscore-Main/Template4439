@@ -1,8 +1,10 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+
 namespace Template4439
 {
     /// <summary>
@@ -20,6 +23,13 @@ namespace Template4439
     /// </summary>
     public partial class _4439_Bikbaev : Window
     {
+        List<int[]> AgeCategories = new List<int[]>() {
+                new int[]{ 20, 29 },
+                new int[]{ 30, 39 },
+                new int[]{ 40, int.MaxValue },
+            };
+        int countAgeCategories = 3;
+
         public _4439_Bikbaev()
         {
             InitializeComponent();
@@ -42,12 +52,7 @@ namespace Template4439
                 clients = db.Clients.ToList();
             }
 
-            int countAgeCategories = 3;
-            List<int[]> AgeCategories = new List<int[]>() {
-                new int[]{ 20, 29 },
-                new int[]{ 30, 39 },
-                new int[]{ 40, int.MaxValue },
-            };
+
             var app = new Microsoft.Office.Interop.Excel.Application();
             app.SheetsInNewWorkbook = countAgeCategories;
             Microsoft.Office.Interop.Excel.Workbook workbook = app.Workbooks.Add(Type.Missing);
@@ -154,6 +159,161 @@ namespace Template4439
                 MessageBox.Show("Import success");
             }
 
+        }
+        // 3LR
+        class ClientJson
+        {
+            public int Id { get; set; }
+            public string FullName { get; set; }
+            public string CodeClient { get; set; }
+            public string BirthDate { get; set; }
+            public string Index { get; set; }
+            public string City { get; set; }
+            public string Street { get; set; }
+            public int Home { get; set; }
+            public int Kvartira { get; set; }
+            public string E_mail { get; set; }
+
+
+        }
+
+
+
+        private void ImportJsonBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // чтение данных
+
+            string json = File.ReadAllText(@"C:\4course\3.json");
+            var clients = JsonSerializer.Deserialize<List<ClientJson>>(json);
+
+            using (ISRPO_LR2_EXCELEntities db = new ISRPO_LR2_EXCELEntities())
+            {
+                foreach (ClientJson client in clients)
+                {
+                    try
+                    {
+                        db.Clients.Add(new Client()
+                        {
+                            FIO = client.FullName,
+                            ClientCode = Convert.ToInt32(client.CodeClient),
+                            Birthday = Convert.ToDateTime(client.BirthDate),
+                            ClientIndex = client.Index,
+                            City = client.City,
+                            Street = client.Street,
+                            HouseNumber = client.Home,
+                            FlatNumber = client.Kvartira,
+                            Email = client.E_mail,
+                            Age = GetAge(Convert.ToDateTime(client.BirthDate))
+                        });
+                    }
+                    catch { }
+                }
+                db.SaveChanges();
+                MessageBox.Show("Import success");
+            }
+        }
+
+        private void ExportDocxBtn_Click(object sender, RoutedEventArgs e)
+        {
+            List<Client> clients;
+
+            using (ISRPO_LR2_EXCELEntities db = new ISRPO_LR2_EXCELEntities())
+            {
+                clients = db.Clients.ToList();
+            }
+
+
+            var app = new Microsoft.Office.Interop.Word.Application();
+            Microsoft.Office.Interop.Word.Document document = app.Documents.Add();
+
+            for (int i = 0; i < countAgeCategories; i++)
+            {
+                Microsoft.Office.Interop.Word.Paragraph paragraph = document.Paragraphs.Add();
+                Microsoft.Office.Interop.Word.Range range = paragraph.Range;
+                range.Text = Convert.ToString($"Категория - {i + 1}");
+                paragraph.set_Style("Заголовок 1");
+                range.InsertParagraphAfter();
+
+                List<Client> currentClients = clients.Where(c => c.Age >= AgeCategories[i][0] && c.Age <= AgeCategories[i][1]).ToList();
+                int countClientInCategory = currentClients.Count();
+
+
+                Microsoft.Office.Interop.Word.Paragraph tableParagraph = document.Paragraphs.Add();
+                Microsoft.Office.Interop.Word.Range tableRange = tableParagraph.Range;
+                Microsoft.Office.Interop.Word.Table clientsTable = document.Tables.Add(tableRange, countClientInCategory + 1, 3);
+                clientsTable.Borders.InsideLineStyle =
+                clientsTable.Borders.OutsideLineStyle =
+                Microsoft.Office.Interop.Word.WdLineStyle.wdLineStyleSingle;
+                clientsTable.Range.Cells.VerticalAlignment =
+                Microsoft.Office.Interop.Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                Microsoft.Office.Interop.Word.Range cellRange = clientsTable.Cell(1, 1).Range;
+                cellRange.Text = "Код клиента";
+                cellRange = clientsTable.Cell(1, 2).Range;
+                cellRange.Text = "ФИО";
+                cellRange = clientsTable.Cell(1, 3).Range;
+                cellRange.Text = "E-mail";
+                clientsTable.Rows[1].Range.Bold = 1;
+                clientsTable.Rows[1].Range.ParagraphFormat.Alignment =
+                Microsoft.Office.Interop.Word.WdParagraphAlignment.wdAlignParagraphCenter;
+
+                int j = 1;
+                foreach (var currentClient in currentClients)
+                {
+                    cellRange = clientsTable.Cell(j + 1, 1).Range;
+                    cellRange.Text = $"{currentClient.ClientCode}";
+                    cellRange.ParagraphFormat.Alignment =
+                    Microsoft.Office.Interop.Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    cellRange = clientsTable.Cell(j + 1, 2).Range;
+                    cellRange.Text = currentClient.FIO;
+                    cellRange.ParagraphFormat.Alignment =
+                    Microsoft.Office.Interop.Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    cellRange = clientsTable.Cell(j + 1, 3).Range;
+                    cellRange.Text = currentClient.FIO;
+                    cellRange.ParagraphFormat.Alignment =
+                    Microsoft.Office.Interop.Word.WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    j++;
+                }
+            }
+
+        document.Words.Last.InsertBreak(Microsoft.Office.Interop.Word.WdBreakType.wdPageBreak);
+        app.Visible = true;
+        /*document.SaveAs2(@"C:\outputFileWord.docx");
+        document.SaveAs2(@"C:\outputFilePdf.pdf",
+        Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF);*/
+        }
+
+        private void ChangeLR2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            Grid_LR2.Visibility = Visibility.Visible;
+            Grid_LR3.Visibility = Visibility.Hidden;
+            ChangeLR2Btn.Background = Brushes.Bisque;
+            ChangeLR3Btn.Background = Brushes.LightGray;
+        }
+
+        private void ChangeLR3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            Grid_LR3.Visibility = Visibility.Visible;
+            Grid_LR2.Visibility = Visibility.Hidden;
+            ChangeLR2Btn.Background = Brushes.LightGray;
+            ChangeLR3Btn.Background = Brushes.Bisque;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            ChangeLR2Btn.Background = Brushes.Bisque;
+            ChangeLR3Btn.Background = Brushes.LightGray;
+            /*
+            ImportJsonBtn.Click += async (o, el) =>
+            {
+                using (FileStream fs = new FileStream(@"C:\4course\3.json", FileMode.OpenOrCreate))
+                {
+                    List<ClientJson> person = await JsonSerializer.DeserializeAsync<List<ClientJson>>(fs);
+                    MessageBox.Show(person[0].FullName);
+                }
+
+            };*/
         }
     }
 }

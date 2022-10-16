@@ -5,16 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Template4439"
         mc:Ignorable="d"
-        Title="_4439_Bikbaev" Height="450" Width="600">
+        Title="_4439_Bikbaev" Height="450" Width="600" Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">Бикбаев Р.Н. 4439</Label>
-        <Button x:Name="ImportBtn" Click="ImportBtn_Click" Grid.Row="1" Width="200" Height="50">Импорт данных</Button>
+        
+        <!--2 Лабораторная работа-->
+        <Grid x:Name="Grid_LR2">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">Бикбаев Р.Н. 4439 - LR 2</Label>
+            <Button x:Name="ImportBtn" Click="ImportBtn_Click" Grid.Row="1" Width="200" Height="50">Импорт данных</Button>
 
-        <Button x:Name="ExportBtn" Click="ExportBtn_Click" Grid.Row="2" Width="200" Height="50">Экспорт данных</Button>
+            <Button x:Name="ExportBtn" Click="ExportBtn_Click" Grid.Row="2" Width="200" Height="50">Экспорт данных</Button>
+        </Grid>
+
+        <!--3 Лабораторная работа-->
+        <Grid x:Name="Grid_LR3" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">Бикбаев Р.Н. 4439 - LR 3</Label>
+            <Button x:Name="ImportJsonBtn" Click="ImportJsonBtn_Click" Grid.Row="1" Width="200" Height="50">Импорт данных</Button>
+
+            <Button x:Name="ExportDocxBtn" Click="ExportDocxBtn_Click" Grid.Row="2" Width="200" Height="50">Экспорт данных</Button>
+        </Grid>
+
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button x:Name="ChangeLR2Btn" Width="100" Height="35" Click="ChangeLR2Btn_Click">LR2</Button>
+            <Button x:Name="ChangeLR3Btn" Width="100" Height="35" Click="ChangeLR3Btn_Click">LR3</Button>
+        </StackPanel>
     </Grid>
 </Window>
