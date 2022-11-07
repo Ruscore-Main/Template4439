@@ -269,7 +269,7 @@ namespace Template4439
                     cellRange.ParagraphFormat.Alignment =
                     Microsoft.Office.Interop.Word.WdParagraphAlignment.wdAlignParagraphCenter;
                     cellRange = clientsTable.Cell(j + 1, 3).Range;
-                    cellRange.Text = currentClient.FIO;
+                    cellRange.Text = currentClient.Email;
                     cellRange.ParagraphFormat.Alignment =
                     Microsoft.Office.Interop.Word.WdParagraphAlignment.wdAlignParagraphCenter;
 

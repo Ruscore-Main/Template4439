@@ -19,7 +19,7 @@
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">Бикбаев Р.Н. 4439 - LR 2</Label>
+            <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">Бикбаев Р.Н. 4439 - LR 3</Label>
             <Button x:Name="ImportBtn" Click="ImportBtn_Click" Grid.Row="1" Width="200" Height="50">Импорт данных</Button>
 
             <Button x:Name="ExportBtn" Click="ExportBtn_Click" Grid.Row="2" Width="200" Height="50">Экспорт данных</Button>
